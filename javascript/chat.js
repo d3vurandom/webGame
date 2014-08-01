@@ -1,21 +1,16 @@
-$(document).ready(function() {
-    scrollDivToBottom("globalChat")
-    setInterval(function() {getChatMessageUpdates("global", lastMessage)}, 1200);
-});
-
 function submitMessage(channel) {
-    var message = document.chatMessage.message.value;
+    var message = $('form[name="chatMessage"]').find('input[name="message"]');
 
-    postAjaxRequest("./submitChannelMessage.php","channel=" + channel + "&message=" + message, function (response) {
-        if(response == "true"){
-            var message = $('form[name="chatMessage"]').find('input[name="message"]');
-            message.val("");
-            scrollDivToBottom("globalChat")
-        }
-        else{
-        }
-    }) ;
-
+    if(message.val().length > 0){
+        postAjaxRequest("./submitChannelMessage.php","channel=" + channel + "&message=" + message.val(), function (response) {
+            if(response == "true"){
+                message.val("");
+                scrollDivToBottom("globalChatContent");
+            }
+            else{
+            }
+        }) ;
+    }
 }
 
 function postAjaxRequest(file, data, onSuccess, onFailure){
@@ -69,5 +64,19 @@ function getChatMessageUpdates(channel,lastMessageReceived){
 
 function scrollDivToBottom(divName){
     var div = document.getElementById(divName);
-    $(div).animate({ scrollTop: $("#globalChat")[0].scrollHeight}, 2000);
+    $(div).animate({ scrollTop: $("#globalChatContent")[0].scrollHeight}, 2000);
+}
+
+
+function getChannelMembers(channelName){
+
+    postAjaxRequest("./getChannelMembersList.php","channelName=" + channelName, function (response) {
+        if(response != "false" && response != ""){
+
+                var value = "<h3>Channel Members</h3>";
+                value += "<hr>";
+                value += response;
+            $('#channelMembers').html(value);
+        }
+    });
 }

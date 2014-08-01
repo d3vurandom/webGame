@@ -1,3 +1,7 @@
+$(document).ready(function() {
+
+});
+
 function authenticationTimer(maximumIdleTime){
 
     //set time till de authentication

@@ -56,7 +56,15 @@ class user{
         return true;
     }
 
-
+    /**
+     * @param $username
+     * @param $firstName
+     * @param $lastName
+     * @param $emailAddress
+     * @param $password
+     * @return bool
+     * this function is used to create an account it does all of the sensitization as well.
+     */
     public function createUserAccount($username,$firstName,$lastName,$emailAddress,$password){
         $username = filter_var($username,FILTER_SANITIZE_STRING);
         $firstName = filter_var($firstName,FILTER_SANITIZE_STRING);
@@ -140,7 +148,6 @@ class user{
     public function getFirstNameByID($userID){
         $userID = filter_var($userID,FILTER_SANITIZE_NUMBER_INT);
 
-
         $sqlQuery="SELECT firstName
                         FROM users
                         WHERE userID=? AND isActive=true";
@@ -155,6 +162,32 @@ class user{
         if($statement->num_rows == 1 && $statement->fetch()){
             database::getInstance()->closeDb($statement);
             return $firstName;
+        }
+        database::getInstance()->closeDb($statement);
+        return false;
+    }
+    /**
+     * @param $userID
+     * @return bool|mixed|string
+     * this function returns the username given a valued userID
+     */
+    public function getUsernameByID($userID){
+        $userID = filter_var($userID,FILTER_SANITIZE_NUMBER_INT);
+
+        $sqlQuery="SELECT username
+                        FROM users
+                        WHERE userID=? AND isActive=true";
+        $parameters = array ($userID);
+        $statement = database::getInstance()->databaseQuery($sqlQuery,$parameters);
+
+        /* Bind result */
+        if (!($statement->bind_result($username))) {
+            echo "Getting result set failed: (" . $statement->errno . ") " . $statement->error;
+        }
+
+        if($statement->num_rows == 1 && $statement->fetch()){
+            database::getInstance()->closeDb($statement);
+            return $username;
         }
         database::getInstance()->closeDb($statement);
         return false;

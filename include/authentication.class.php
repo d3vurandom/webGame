@@ -25,7 +25,7 @@ class authentication{
 
     /**
      * @param $cookieName
-     * @return bool Returnes true if the cookie was removed successfully
+     * @return bool Returns true if the cookie was removed successfully
      */
     public function removeAuthenticationCookie($cookieName){
         global $domainPath;
@@ -38,7 +38,7 @@ class authentication{
         }
     }
     /**
-     * @return bool
+     * @return bool if you are authenticated or not
      */
     public function isAuthenticated() {
         require_once('./include/config.php');
@@ -60,7 +60,11 @@ class authentication{
             return true;
         }
     }
-
+    /**
+     * @param $userID
+     * @return bool|string
+     * this function generated the token that is used for authentication
+     */
     public function createAuthenticationToken($userID){
 
         if(is_int($userID)){
@@ -271,7 +275,10 @@ class authentication{
             return true;
         }
     }
-
+    /**
+     * @return mixed
+     * This function returns the userID that is in the token so we know who is logged in
+     */
     public function getUserIDFromToken(){
         include('./include/config.php');
         $token = $_COOKIE[$cookieName];
@@ -279,7 +286,10 @@ class authentication{
         return $array['userID'];
     }
 
-
+    /**
+     * this function is no longer used
+     * it displays the contents of the cookie, this was used for troubleshooting
+     */
     public function displayCookieInfo(){
 
         global $cookieName, $maximumIdleTime;

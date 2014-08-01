@@ -1,5 +1,7 @@
 <?php
     require_once('./include/user.class.php');
+    require_once('./include/chat.class.php');
+    require_once('./include/authentication.class.php');
 
     if(isset($_POST['username'])
         && $_POST['username'] != ""
@@ -32,9 +34,12 @@
         }
         else {
             if(user::createUserAccount($username,$firstName,$lastName,$emailAddress,$password)){
-                echo "true";
-                return true;
-                exit();
+                if(chat::joinChannel($channelName)){
+                    echo "true";
+                    return true;
+                    exit();
+                }
+
             }else{
                 echo "false";
                 return false;

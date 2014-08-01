@@ -1,7 +1,19 @@
 <?php
+    /**
+     * This class is used for the chat functions and chat related accessories.
+     */
     require_once('./include/database.class.php');
 
     class chat{
+        /**
+         * @param $channelName
+         * @param int $limit
+         * @return array|bool
+         * This function will get all of the messages in a given channel up to a certin number of messages
+         * the idea here is that yuu do not want to load EVERY messgae in a channel as there could be millions and
+         * that would be bad. I had hoped to do this how the iphone does it where it will only load the bottom 100 or so
+         * and then will allow you to load earlier messages if you wished. currently it does not do that good of a job :-/
+         */
         public function getChannelMessages($channelName, $limit = 100){
             $limit = filter_var($channelName,FILTER_SANITIZE_NUMBER_INT);
             if($limit <= 0 || $limit > 15000){
@@ -49,7 +61,11 @@
             database::getInstance()->closeDB($statement);
             return false;
         }
-
+        /**
+         * @param $channelName
+         * @return array|bool
+         * This will return the userIDs that are associated with a given channel name.
+         */
         public function getChannelMembers($channelName){
 
             $channelName = filter_var($channelName,FILTER_SANITIZE_STRING);
@@ -79,7 +95,10 @@
             database::getInstance()->closeDB($statement);
             return false;
         }
-
+        /*
+         * This will add you to a new channel by name it will pull your userID from the token and add it to the channel,
+         * should the channel not exist it will create it.
+         */
         public function joinChannel($channelName){
             //filter channel Name
             $channelName = filter_var($channelName,FILTER_SANITIZE_STRING);
@@ -127,14 +146,18 @@
                 }
             }
         }
-
+        /**
+         * @param $channelName
+         * @param $message
+         * @return bool
+         * puts a messages to a channel nice and simple
+         */
         public function putChannelMessage($channelName,$message){
             $channelName = filter_var($channelName,FILTER_SANITIZE_STRING);
             $message = filter_var($message,FILTER_SANITIZE_STRING);
 
             $channelID = chat::getChannelID($channelName);
             $myUserID = authentication::getUserIDFromToken();
-            echo $channelName . " " . $message . " " . $channelID . " " . $myUserID;
             if(is_int((int)$myUserID) && in_array($myUserID, chat::getChannelMembers($channelName))){
                 $sqlQuery="INSERT INTO chatMessages
                         (channelID,userID,message)
@@ -153,7 +176,12 @@
                 return false;
             }
         }
-
+        /**
+         * @param $channelName
+         * @param $lastMessage
+         * @return array|bool
+         * returns an array of the channel messages since the last message received.
+         */
         public function getChannelMessagesUpdate($channelName,$lastMessage){
             $channelName = filter_var($channelName,FILTER_SANITIZE_STRING);
             $lastMessage = filter_var($lastMessage,FILTER_SANITIZE_NUMBER_INT);
@@ -206,7 +234,11 @@
                 return false;
             }
         }
-
+        /**
+         * @param $channelName
+         * @return bool|null
+         * this functions returns a channelID for a given channelName
+         */
         public function getChannelID($channelName){
             $channelName = filter_var($channelName,FILTER_SANITIZE_STRING);
 
@@ -233,6 +265,13 @@
             database::getInstance()->closeDB($statement);
             return false;
         }
+        /**
+         * @param $channelName
+         * @param $userID
+         * @return bool
+         * this function will return true or false if a given userID is in a given channel, it also does the lookup to get
+         * the channelID.
+         */
         public function isUserInChannel($channelName,$userID){
             $channelName = filter_var($channelName,FILTER_SANITIZE_STRING);
             $userID = filter_var($userID,FILTER_SANITIZE_NUMBER_INT);
@@ -250,4 +289,20 @@
                 return false;
             }
         }
+        /**
+         * @param $channelName
+         * @return array|bool
+         * this returns a list of the userIDs in a given channel
+         */
+        function getChannelMemberList($channelName){
+            if($channelName != "" && $channelMembers = chat::getChannelMembers($channelName)){
+                if(count($channelMembers) > 0){
+                    return $channelMembers;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+
     }

@@ -57,7 +57,6 @@ function createAccount_isInputFieldBlank(inputField){
     }
 }
 
-
 function createAccount(){
     var inputBlank = false;
 
@@ -106,7 +105,6 @@ function createAccount(){
                         , function (response) {
 
                             if(response == "true"){
-
                                 $('#registrationModal').modal('toggle');
                             }
                             else{

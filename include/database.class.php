@@ -1,4 +1,7 @@
 <?php
+/**
+ * I wrote this database class to make my life easier it handles all of my database transactions.
+ */
 class database extends mysqli{
 
     private $databaseUsername = 'asgard-web';
@@ -26,7 +29,13 @@ class database extends mysqli{
     public function __wakeup() {
         trigger_error('De-serializing is not allowed.', E_USER_ERROR);
     }
-
+    /**
+     * @param $sqlQuery
+     * @param $parameters
+     * @return bool|mysqli_stmt
+     * this function takes in an sql Query and the parameters and then makes it into a prepared statement and executes it
+     * then it return the result set.
+     */
     public function databaseQuery($sqlQuery,$parameters){
 
         parent::__construct($this->databaseServerLocation, $this->databaseUsername, $this->databasePassword, $this->databaseName);
@@ -86,12 +95,20 @@ class database extends mysqli{
 
         return $statement;
     }
-
+    /**
+     * @param $statement
+     * used for closing the statement once dones witht he returned values
+     */
     public function closeDB($statement) {
         $statement->close();
         $this->close();
     }
 
+    /**
+     * @param $array
+     * @return array
+     * this is used to do some magic with references.
+     */
     public function refValues($array){
         if (strnatcmp(phpversion(),'5.3') >= 0){ //Reference is required for PHP 5.3+
             $refs = array();
